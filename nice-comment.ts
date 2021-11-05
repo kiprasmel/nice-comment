@@ -24,10 +24,6 @@ export const quoteTick: Predicate = item => [item].map(tick).map(quote)[0];
 
 export const bracket: Predicate = item => "[" + item + "]";
 
-export const spaceL: Predicate = item => " " + item
-export const spaceR: Predicate = item => item + " ";
-export const space: Predicate = item => [item].map(spaceL).map(spaceR)[0];
-
 export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, ret: string = ""): string => (
     (ret = arr.map(predicate).join(", ")), //
     (ret = bracket(ret)),
