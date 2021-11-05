@@ -1,0 +1,25 @@
+{
+	"name": "nice-comment",
+	"version": "0.1.3",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"author": "Kipras Melnikovas <kipras@kipras.org> (https://kipras.org/)",
+	"private": false,
+	"license": "MIT",
+	"scripts": {
+		"build": "yarn tsc -b"
+	},
+	"devDependencies": {
+		"typescript": "4.4.4"
+	},
+	"keywords": [
+		"nice",
+		"comment",
+		"template",
+		"literal"
+	],
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/kiprasmel/nice-comment"
+	}
+}
