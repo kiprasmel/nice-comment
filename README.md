@@ -1,5 +1,7 @@
 # nice-comment
 
+[![test](https://github.com/kiprasmel/nice-comment/actions/workflows/test.yml/badge.svg)](https://github.com/kiprasmel/nice-comment/actions/workflows/test.yml)
+
 create a nice comment.
 
 <p>
