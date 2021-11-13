@@ -33,7 +33,94 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
 	ret
 );
 
-export const toComment = (comments: (string | string[] | string[][])[]): string =>
+/**
+ * 1st level array - joining with double newlines `"\n\n"`
+ *
+ * ```ts
+ * toComment([
+ *   `paragraph 1`,
+ *   `paragraph 2`,
+ *   `paragraph 3`,
+ * ])
+ *
+ * =>
+ *
+ * `
+ * paragraph1
+ *
+ * paragraph2
+ *
+ * paragraph3
+ * `
+ * ```
+ *
+ * ---
+ *
+ * 2nd level array - joining with spaces `" "`
+ *
+ * ```ts
+ * toComment([
+ *   `paragraph 1`,
+ *   [
+ *      `p2 sentence 1.`,
+ *      `p2 sentence 2.`,
+ *      `p2 sentence 3.`,
+ *   ],
+ *   `paragraph 3`,
+ * ])
+ *
+ * =>
+ *
+ * `
+ * paragraph1
+ *
+ * p2 sentence 1. p2 sentence 2. p2 sentence 3.
+ *
+ * paragraph 3
+ * `
+ * ```
+ *
+ * ---
+ *
+ * 3rd level array - joining with nothing `""`
+ *
+ * ```ts
+ * toComment([
+ *    `paragraph 1`,
+ *    [
+ *       `p2 sentence 1.`,
+ *       [
+ *          `p2 s2 word 1,`,
+ *          `p2 s2 word 2,`,
+ *          `p2 s2 word 3.`,
+ *       ],
+ *       `p2 sentence 3.`,
+ *    ],
+ *    `paragraph 3`,
+ * ])
+ *
+ * =>
+ *
+ * `
+ * paragraph 1
+ *
+ * p2 sentence 1. p2 s2 word 1,p2 s2 word 2,p2 s2 word 3. p2 sentence 3.
+ *
+ * paragraph 3
+ * `
+ *
+ * ```
+ *
+ */
+export const toComment = (
+	comments: Array<
+		| string //
+		| Array<
+				| string //
+				| Array<string>
+		  >
+	>
+): string =>
 	comments //
-		.map((line) => (Array.isArray(line) ? line.map((l) => (Array.isArray(l) ? l.join(" ") : l)).join("") : line))
+		.map((line) => (Array.isArray(line) ? line.map((l) => (Array.isArray(l) ? l.join("") : l)).join(" ") : line))
 		.join("\n\n");
