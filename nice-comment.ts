@@ -30,7 +30,7 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
     ret
 );
 
-export const toComment = (comments: (string | string[])[]): string =>
-    comments //
-        .map(line => (Array.isArray(line) ? line.join("") : line))
-        .join("\n\n");
+export const toComment = (comments: (string | string[] | string[][])[]): string =>
+	comments //
+		.map((line) => (Array.isArray(line) ? line.map((l) => (Array.isArray(l) ? l.join(" ") : l)).join("") : line))
+		.join("\n\n");
