@@ -7,9 +7,9 @@ const c = toComment([
 	[
 		`p2 sentence 1.`,
 		[
-			`p2 s2 word 1,`, //
-			`p2 s2 word 2,`,
-			`p2 s2 word 3.`,
+			`p2 s2 part 1 (`, //
+			`p2 s2 part 2`,
+			`) p2 s2 part 3.`,
 		],
 		`p2 sentence 3.`,
 	],
@@ -19,7 +19,7 @@ const c = toComment([
 const expected = `\
 paragraph 1
 
-p2 sentence 1. p2 s2 word 1,p2 s2 word 2,p2 s2 word 3. p2 sentence 3.
+p2 sentence 1. p2 s2 part 1 (p2 s2 part 2) p2 s2 part 3. p2 sentence 3.
 
 paragraph 3\
 `;

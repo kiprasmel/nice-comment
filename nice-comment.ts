@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+
 type Predicate = (item: string) => string;
 
 export const quote: Predicate = (item) => `"${item}"`;
@@ -90,9 +92,9 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
  *    [
  *       `p2 sentence 1.`,
  *       [
- *          `p2 s2 word 1,`,
- *          `p2 s2 word 2,`,
- *          `p2 s2 word 3.`,
+ *          `p2 s2 part 1 (`,
+ *          `p2 s2 part 2`,
+ *          `) p2 s2 part 3.`,
  *       ],
  *       `p2 sentence 3.`,
  *    ],
@@ -104,23 +106,68 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
  * `
  * paragraph 1
  *
- * p2 sentence 1. p2 s2 word 1,p2 s2 word 2,p2 s2 word 3. p2 sentence 3.
+ * p2 sentence 1. p2 s2 part 1 (p2 s2 part 2) p2 s2 part 3. p2 sentence 3.
  *
  * paragraph 3
  * `
  *
  * ```
  *
+ * same as
+ *
+ * ```ts
+ * const part2 = `p2 s2 part 2`
+ *
+ * toComment([
+ *    `paragraph 1`,
+ *    [
+ *       `p2 sentence 1.`,
+ *       `p2 s2 part 1`,
+ *       [
+ *          `(`,
+ *           part2,
+ *          `)`,
+ *       ],
+ *       `p2 s2 part 3.`,
+ *       `p2 sentence 3.`,
+ *    ],
+ *    `paragraph 3`,
+ * ])
+ *
+ * =>
+ *
+ * `
+ * paragraph 1
+ *
+ * p2 sentence 1. p2 s2 part 1 (p2 s2 part 2) p2 s2 part 3. p2 sentence 3.
+ *
+ * paragraph 3
+ * `
+ * ```
+ *
  */
 export const toComment = (
-	comments: Array<
+	paragraphs: Array<
 		| string //
 		| Array<
 				| string //
-				| Array<string>
+				| Array<
+						string //
+				  >
 		  >
 	>
 ): string =>
-	comments //
-		.map((line) => (Array.isArray(line) ? line.map((l) => (Array.isArray(l) ? l.join("") : l)).join(" ") : line))
+	paragraphs //
+		.map((sentences) =>
+			Array.isArray(sentences)
+				? sentences //
+						.map((parts) =>
+							Array.isArray(parts)
+								? parts //
+										.join("")
+								: parts
+						)
+						.join(" ")
+				: sentences
+		)
 		.join("\n\n");
