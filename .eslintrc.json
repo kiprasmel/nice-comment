@@ -1,0 +1,6 @@
+{
+	"extends": "eslint-config-sarpik",
+	"rules": {
+		"no-param-reassign": 0
+	}
+}
