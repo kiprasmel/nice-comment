@@ -30,7 +30,7 @@ export const bracket: Predicate = (item) => "[" + item + "]";
 export const parens = (prefixInside: string, mid: string, postfixOutside: string = "", midPredicate = tick): string =>
 	"(" + prefixInside + " " + midPredicate(mid) + ")" + postfixOutside;
 
-export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, ret: string = ""): string => (
+export const array = (arr: string[] = [], predicate: Predicate = quote, ret: string = ""): string => (
 	(ret = arr.map(predicate).join(", ")), //
 	(ret = bracket(ret)),
 	ret
