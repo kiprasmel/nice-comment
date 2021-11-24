@@ -66,12 +66,12 @@ export function joinWith<Item extends S = S>(
 	separator: string, //
 	joinerOfItemOrDeepItems?: never
 ): // TODO compile-time (if DeepItems<S> === S[]):
-(items: Item[]) => S;
+(items: Item[]) => string;
 
 export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
 	separator: string, //
 	joinerOfItemOrDeepItems: Joiner<ItemOrDeepItems> //
-): (items: ItemOrDeepItems[]) => S;
+): (items: ItemOrDeepItems[]) => string;
 
 export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
 	separator: string, //
@@ -94,7 +94,7 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 ) {
 	return (
 		items: ItemOrDeepItems[] //
-	): S =>
+	): string =>
 		items //
 			.map((itemOrDeepItems: ItemOrDeepItems) => flattenIfDeep(itemOrDeepItems))
 			.join(separator);
