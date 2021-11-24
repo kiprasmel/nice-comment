@@ -189,6 +189,11 @@ is-number@^7.0.0:
   resolved "https://registry.yarnpkg.com/is-number/-/is-number-7.0.0.tgz#7535345b896734d5f80c4d06c50955527a14f12b"
   integrity sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==
 
+jest-sucks@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/jest-sucks/-/jest-sucks-0.4.0.tgz#f76accf9c55f46210026acf894d9282593c985f6"
+  integrity sha512-w/ADTC2fcCBovaWlrPZXmuwk9s4PZFuACdfIjcMowgv6tzxgk//MUWnLy7kfajHZPvf+qtj6uH4QJvQd+i6xNw==
+
 make-error@^1.1.1:
   version "1.3.6"
   resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.3.6.tgz#2eb2e37ea9b67c4891f684a1394799af484cf7a2"

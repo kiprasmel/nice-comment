@@ -8,10 +8,11 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "yarn tsc -b",
-		"test": "yarn ts-node-dev test/run.ts && printf '\\nsuccess\\n\\n' || printf '\\nfail\\n\\n'"
+		"test": "yarn ts-node-dev test/test.ts"
 	},
 	"devDependencies": {
 		"@types/node": "^16.11.7",
+		"jest-sucks": "0.4.0",
 		"ts-node-dev": "^1.1.8",
 		"typescript": "4.4.4"
 	},

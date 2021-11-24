@@ -10,3 +10,5 @@ jobs:
       - uses: actions/checkout@v2
       - run: yarn --frozen-lockfile
       - run: yarn test
+      - run: cat test-results.failed.json 2>/dev/null
+ 
