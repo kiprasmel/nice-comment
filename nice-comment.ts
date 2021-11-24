@@ -35,6 +35,79 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
 	ret
 );
 
+export type S = string;
+
+export type DeepArray<T> = Array<T | DeepArray<T>>;
+
+export type JoinerOfDeepArrays<T extends DeepArray<S> = DeepArray<S>> = (items: T) => S;
+
+export const ifDeepArrayThenFlattenWith = <T extends S | DeepArray<S> = S | DeepArray<S>>(
+	deepArrayJoiner: JoinerOfDeepArrays<Exclude<T, S>> //
+) => (
+	items: S | T //
+): S =>
+	// typeof items === "string" //
+	// 	? (items as I)
+	// 	: deepArrayJoiner(items as Exclude<T, I>);
+	!Array.isArray(items) //
+		? (items as S)
+		: deepArrayJoiner(items as Exclude<T, S>);
+
+/**
+ * aka Flattener
+ */
+type Joiner<T extends S | DeepArray<S> = S | DeepArray<S>> = (items: S | T) => S;
+
+/**
+ * overloads
+ */
+
+export function joinWith<Item extends S = S>(
+	separator: string, //
+	joinerOfItemOrDeepItems?: never
+): // TODO compile-time (if DeepItems<S> === S[]):
+(items: Item[]) => S;
+
+export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
+	separator: string, //
+	joinerOfItemOrDeepItems: Joiner<ItemOrDeepItems> //
+): (items: ItemOrDeepItems[]) => S;
+
+export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
+	separator: string, //
+	flattenIfDeep: Joiner<ItemOrDeepItems> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
+		throw new Error(
+			"`joinerOfItemOrDeepItems` predicate is required for function `joinWith` if `items` are `DeepArray<S>` instead of just `S`, but none was provided."
+		);
+	})
+	// // TODO compile-time (if DeepItems<S> === S[]):
+	// joinerOfItemOrDeepItems: S[] extends ItemOrDeepItems
+	// 	? Joiner<ItemOrDeepItems> //
+	// : never
+	// 	: never = (ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
+	// 	throw new Error(
+	// 		"`joinerOfItemOrDeepItems` predicate is required for function `joinWith` if `items` are `DeepArray<S>` instead of just `S`, but none was provided."
+	// 	);
+	// 	// : never
+	// }) as Joiner<ItemOrDeepItems> | never) as any
+	// // TODO function overloads
+) {
+	return (
+		items: ItemOrDeepItems[] //
+	): S =>
+		items //
+			.map((itemOrDeepItems: ItemOrDeepItems) => flattenIfDeep(itemOrDeepItems))
+			.join(separator);
+}
+
+export type Part = string;
+export type Sentence = string | Part[];
+export type Paragraph = string | Sentence[];
+export type Comment = Paragraph[];
+
+export const toSentence = joinWith<Part>("");
+export const toParagraph = joinWith<Sentence>(" ", ifDeepArrayThenFlattenWith(toSentence));
+
 /**
  * 1st level array - joining with double newlines `"\n\n"`
  *
@@ -146,28 +219,4 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
  * ```
  *
  */
-export const toComment = (
-	paragraphs: Array<
-		| string //
-		| Array<
-				| string //
-				| Array<
-						string //
-				  >
-		  >
-	>
-): string =>
-	paragraphs //
-		.map((sentences) =>
-			Array.isArray(sentences)
-				? sentences //
-						.map((parts) =>
-							Array.isArray(parts)
-								? parts //
-										.join("")
-								: parts
-						)
-						.join(" ")
-				: sentences
-		)
-		.join("\n\n");
+export const toComment = joinWith<Paragraph>("\n\n", ifDeepArrayThenFlattenWith(toParagraph));
