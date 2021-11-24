@@ -34,7 +34,6 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
 	(ret = bracket(ret)),
 	ret
 );
-
 /**
  * 1st level array - joining with double newlines `"\n\n"`
  *
@@ -146,28 +145,144 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
  * ```
  *
  */
-export const toComment = (
-	paragraphs: Array<
+// export const toComment = (
+// 	paragraphs: Array<
+// 		| string //
+// 		| Array<
+// 				| string //
+// 				| Array<
+// 						string //
+// 				  >
+// 		  >
+// 	>
+// ): string =>
+// 	paragraphs //
+// 		.map((sentences) =>
+// 			!Array.isArray(sentences)
+// 				? sentences // already a paragraph
+// 				: toParagraph(sentences)
+// 		)
+// 		.join("\n\n");
+
+// type Poo = Array<
+// 	// | string //
+// 	| Array<
+// 			| string //
+// 			| Array<
+// 					string //
+// 			  >
+// 	  >
+// >;
+
+type Poo =
+	// | string // TODO RM
+	Array<
 		| string //
 		| Array<
 				| string //
 				| Array<
 						string //
+						// | Array<string> // TODO RM
 				  >
 		  >
-	>
+	>;
+
+type DeepArray<T> = Array<T | DeepArray<T>>;
+
+// type Joiner<T extends DeepArray<any>> = T extends DeepArray<infer U> ? (items: U | T) => T : never; //
+// type JoinerOfDeepArrays<T> = T extends DeepArray<infer U> ? (items: T) => U : never;
+type Joiner<I, T extends DeepArray<I>> = (items: I | T) => I;
+type JoinerOfDeepArrays<I, T extends DeepArray<I>> = (items: T) => I;
+
+export const ifDeepArrayThenModifyWith = <I = unknown, T extends DeepArray<I> = DeepArray<I>>(
+	deepArrayJoiner: JoinerOfDeepArrays<I, T> //
+): Joiner<I, T> => (
+	items //
+) =>
+	!Array.isArray(items) //
+		? items
+		: deepArrayJoiner(items);
+
+// export const toComment2 = (
+// 	paragraphs: Poo //
+// ): string =>
+// 	paragraphs //
+// 		.map(ifDeepArrayThenModifyWith(toParagraph))
+// 		.join("\n\n");
+
+// const toParagraph = (sentences: Sentences): string =>
+// 	sentences //
+// 		.map(ifDeepArrayThenModifyWith(toSentence))
+// 		.join(" ");
+
+//
+
+// const createJoiner = <T>(pred: (item: T) => T, separator: string) => (items: T[]): string =>
+// const createJoiner = <I = unknown | never, T extends DeepArray<I> = DeepArray<I>>(
+// 	pred: (items: T) => I,
+// 	separator: string
+// ) => (items: T): string => items.map(pred).join(separator);
+
+// const joinWith = <T>(separator: string, pred: Joiner<T> = ifDeepArrayThenModifyWith((item) => item)) => (
+export const joinWith = <Item = unknown>(
+	separator: string, //
+	deepArrayJoiner: Joiner<Item, DeepArray<Item>> = ifDeepArrayThenModifyWith<Item, DeepArray<Item>>((_deepArray) => {
+		throw new Error(
+			"`deepArrayJoiner` predicate required for function `joinWith` if `items` are DeepArray<T> instead of just `T`"
+		);
+	})
+) => (
+	items: DeepArray<Item> //
 ): string =>
-	paragraphs //
-		.map((sentences) =>
-			Array.isArray(sentences)
-				? sentences //
-						.map((parts) =>
-							Array.isArray(parts)
-								? parts //
-										.join("")
-								: parts
-						)
-						.join(" ")
-				: sentences
-		)
-		.join("\n\n");
+	items //
+		.map(deepArrayJoiner)
+		.join(separator);
+
+// const toSentence = (parts: Parts): string =>
+// 	parts
+// 		.map((part) => part) // just don't modify!
+// 		.join("");
+
+type Sentences = Exclude<Poo[0], string>;
+type Parts = Exclude<Sentences[0], string>;
+
+const a: Parts = [""];
+
+const noop = (..._xs: any[]): void => {};
+
+noop(a);
+
+// const toSentence = joinWith("", (i) => i);
+export const toSentence = joinWith<Parts[0]>("");
+
+// const toParagraph = joinWith(" ", ifDeepArrayThenModifyWith(toSentence));
+export const toParagraph = joinWith<Sentences>(" ", ifDeepArrayThenModifyWith(toSentence));
+
+export const toComment = joinWith<Poo[0]>("\n\n", ifDeepArrayThenModifyWith(toParagraph));
+
+// type FromArrayExtractT<A> = A extends Array<infer T> ? T : never;
+
+// const toSentence = ifArrayThenModifyWith((items) => items.join(""));
+// const toSentence = (parts: Parts) => [parts].map(ifArrayThenModifyWith((items) => items.join("")))[0];
+// const toSentence = (parts: Parts): FromArrayExtractT<Parts> => [parts].map((stillParts) => stillParts.join(""))[0];
+// const toSentence = (parts: Parts): string => [parts].map((stillParts) => stillParts.join(""))[0];
+// const toSentence = (parts: Parts): string =>
+// 	// parts.map(
+// 	// 	ifArrayThenModifyWith((i) => i.join("")) //
+// 	// )[0];
+// 	// .join("");
+// 	ifArrayThenModifyWith((stillParts) => stillParts.join(""))(parts);
+// // parts.join("");
+
+// const toSentence = (parts: Parts): string =>
+// 	// wrapping here is bad because the the `ifArrayThenModifyWith` cannot properly infer the `string` type
+// 	[parts]
+// 		.map(
+// 			ifArrayThenModifyWith<string>((stillParts) => stillParts.join(""))
+// 		)
+// 		// )[0];
+// 		.join(""); // works identical to [0]
+
+// const arr: string[] = ["a", "b", "c"];
+// const bbbbb = ifArrayThenModifyWith<string>((i) => i.join(""))(arr);
+// const bbbbb = ifArrayThenModifyWith<string>((i) => i)(arr);

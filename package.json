@@ -8,7 +8,7 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "yarn tsc -b",
-		"test": "yarn ts-node-dev test/run.ts"
+		"test": "yarn ts-node-dev test/run.ts && printf '\\nsuccess\\n\\n' || printf '\\nfail\\n\\n'"
 	},
 	"devDependencies": {
 		"@types/node": "^16.11.7",
