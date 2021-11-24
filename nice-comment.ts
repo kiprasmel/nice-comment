@@ -36,6 +36,13 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
 	ret
 );
 
+export const toBulletpoints = (
+	prefixSentence: string = "",
+	arr: string[] = [],
+	bulletpoint = "- ",
+	joiner = "\n"
+): string => [prefixSentence, ...arr].join(joiner + bulletpoint);
+
 export type S = string;
 
 export type DeepArray<T> = Array<T | DeepArray<T>>;
