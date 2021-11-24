@@ -36,8 +36,8 @@ export const toPrettyArr = (arr: string[] = [], predicate: Predicate = quote, re
 	ret
 );
 
-export const toBulletpoints = (
-	prefixSentence: string = "",
+export const bullets = (
+	prefixSentence: string = "", //
 	arr: string[] = [],
 	bulletpoint = "- ",
 	joiner = "\n"
