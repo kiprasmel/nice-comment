@@ -4,7 +4,8 @@ type Predicate = (item: string) => string;
 
 export const quote: Predicate = (item) => `"${item}"`;
 
-export const tick: Predicate = (item) => "`" + item + "`";
+export const tick = (prefixInside: string, postfixOutside: string = ""): string =>
+	"`" + prefixInside + "`" + postfixOutside;
 
 /**
  * item => `"item"`
@@ -13,7 +14,7 @@ export const tick: Predicate = (item) => "`" + item + "`";
  *
  * (you probably want this)
  */
-export const tickQuote: Predicate = (item) => [item].map(quote).map(tick)[0];
+export const tickQuote: Predicate = (item) => [item].map(quote).map((i) => tick(i))[0];
 
 /**
  * item => "`item`"
@@ -22,7 +23,7 @@ export const tickQuote: Predicate = (item) => [item].map(quote).map(tick)[0];
  *
  * (you probably want the other one)
  */
-export const quoteTick: Predicate = (item) => [item].map(tick).map(quote)[0];
+export const quoteTick: Predicate = (item) => [item].map((i) => tick(i)).map(quote)[0];
 
 export const bracket: Predicate = (item) => "[" + item + "]";
 
