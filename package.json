@@ -8,11 +8,12 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "yarn tsc -b",
-		"test": "yarn ts-node-dev test/test.ts"
+		"test": "yarn ts-node-dev test/test.ts",
+		"prepack": "yarn test && yarn build"
 	},
 	"devDependencies": {
 		"@types/node": "^16.11.7",
-		"jest-sucks": "0.4.0",
+		"jest-sucks": "0.4.1",
 		"ts-node-dev": "^1.1.8",
 		"typescript": "4.4.4"
 	},
