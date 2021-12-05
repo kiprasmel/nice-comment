@@ -72,17 +72,20 @@ type Joiner<T extends S | DeepArray<S> = S | DeepArray<S>> = (items: S | T) => S
 
 export function joinWith<Item extends S = S>(
 	separator: string, //
+	appendNeitherFirstLastBoth?: 0 | 1 | 2 | 3,
 	joinerOfItemOrDeepItems?: never
 ): // TODO compile-time (if DeepItems<S> === S[]):
 (items: Item[]) => string;
 
 export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
 	separator: string, //
+	appendNeitherFirstLastBoth: 0 | 1 | 2 | 3,
 	joinerOfItemOrDeepItems: Joiner<ItemOrDeepItems> //
 ): (items: ItemOrDeepItems[]) => string;
 
 export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
 	separator: string, //
+	appendNeitherFirstLastBoth: 0 | 1 | 2 | 3 = 0,
 	flattenIfDeep: Joiner<ItemOrDeepItems> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
 		throw new Error(
 			"`joinerOfItemOrDeepItems` predicate is required for function `joinWith` if `items` are `DeepArray<S>` instead of just `S`, but none was provided."
@@ -103,18 +106,24 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 	return (
 		items: ItemOrDeepItems[] //
 	): string =>
+		([1, 3].includes(appendNeitherFirstLastBoth) ? separator : "") +
 		items //
 			.map((itemOrDeepItems: ItemOrDeepItems) => flattenIfDeep(itemOrDeepItems))
-			.join(separator);
+			.join(separator) +
+		([2, 3].includes(appendNeitherFirstLastBoth) ? separator : "");
 }
+
+export const joinWithIncludingFirst = (sep: string) => joinWith(sep, 1);
+export const joinWithIncludingLast = (sep: string) => joinWith(sep, 2);
+export const joinWithIncludingFirstLast = (sep: string) => joinWith(sep, 3);
 
 export type Part = string;
 export type Sentence = string | Part[];
 export type Paragraph = string | Sentence[];
 export type Comment = Paragraph[];
 
-export const toSentence = joinWith<Part>("");
-export const toParagraph = joinWith<Sentence>(" ", ifDeepArrayThenFlattenWith(toSentence));
+export const toSentence = joinWith<Part>("", 0);
+export const toParagraph = joinWith<Sentence>(" ", 0, ifDeepArrayThenFlattenWith(toSentence));
 
 /**
  * 1st level array - joining with double newlines `"\n\n"`
@@ -227,4 +236,4 @@ export const toParagraph = joinWith<Sentence>(" ", ifDeepArrayThenFlattenWith(to
  * ```
  *
  */
-export const toComment = joinWith<Paragraph>("\n\n", ifDeepArrayThenFlattenWith(toParagraph));
+export const toComment = joinWith<Paragraph>("\n\n", 0, ifDeepArrayThenFlattenWith(toParagraph));
