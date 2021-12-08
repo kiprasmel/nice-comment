@@ -13,8 +13,9 @@ try {
 
 	toComment(["foo", ["bar", ["baz"]]]);
 
+	// TODO
 	// @ts-expect-error
-	toComment("foo");
+	toComment("too");
 } catch (e) {
 	//
 }
