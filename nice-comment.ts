@@ -55,14 +55,17 @@ export const ifDeepArrayThenFlattenWith = <T extends S | DeepArray<S> = S | Deep
 ) => (
 	// items: T extends Array<infer SS> ? SS : S | T //
 	// items: S | T
-	items: T extends DeepArray<any> ? S | T : S
+	// items: T extends DeepArray<infer TT> ? S | TT : S
+	// items: T extends DeepArray<any> ? S | T : S
+	items: T extends DeepArray<any> ? Exclude<T, S> : S
 ): S =>
 	// typeof items === "string" //
 	// 	? (items as I)
 	// 	: deepArrayJoiner(items as Exclude<T, I>);
 	!Array.isArray(items) //
-		? (items as S)
-		: deepArrayJoiner(items as Exclude<T, S>);
+		? items
+		: // : deepArrayJoiner(items);
+		  deepArrayJoiner(items as Exclude<T, S>);
 
 /**
  * aka Flattener
@@ -80,6 +83,7 @@ const ooka = ifDeepArrayThenFlattenWith(l2);
 const l3 = joinWith("\n", ooka);
 
 l3(["foo", ["lmao", ["kek", "w", ["upps"]]]]);
+l3("lmao");
 
 export function joinWith<Item extends S = S>(
 	separator: string, //
@@ -118,7 +122,9 @@ export function joinWith<ItemOrDeepItems extends DeepArray<S> = DeepArray<S>>(
 	separator: string, //
 	appendNeitherFirstLastBoth: 0 | 1 | 2 | 3 | JoinerOfDeepArrays<Exclude<ItemOrDeepItems, S>> = 0,
 	// flattenIfDeep: Joiner<ItemOrDeepItems> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
-	flattenIfDeep: JoinerOfDeepArrays<Exclude<ItemOrDeepItems, S>> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
+
+	// flattenIfDeep: JoinerOfDeepArrays<Exclude<ItemOrDeepItems, S>> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
+	flattenIfDeep = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
 		throw new Error(
 			"`joinerOfItemOrDeepItems` predicate is required for function `joinWith` if `items` are `DeepArray<S>` instead of just `S`, but none was provided."
 		);
@@ -141,7 +147,8 @@ export function joinWith<ItemOrDeepItems extends DeepArray<S> = DeepArray<S>>(
 		// item: ItemOrDeepItems,
 		// ...items: ItemOrDeepItems[] //
 
-		items: ItemOrDeepItems | ItemOrDeepItems[] //
+		// items: ItemOrDeepItems | ItemOrDeepItems[] //
+		items: ItemOrDeepItems
 	): string =>
 		appendNeitherFirstLastBoth instanceof Function
 			? // ? (Array.isArray(items) ? items : [items])
