@@ -47,7 +47,10 @@ export type S = string;
 
 export type DeepArray<T> = Array<T | DeepArray<T>>;
 
-export type JoinerOfDeepArrays<T extends DeepArray<S> = DeepArray<S>> = (items: T) => S;
+// export type JoinerOfDeepArrays<T extends DeepArray<S> = DeepArray<S>> = (items: T) => S;
+export type JoinerOfDeepArrays<ItemOrDeepItems extends DeepArray<S> = DeepArray<S>> = (
+	items: ItemOrDeepItems extends DeepArray<any> ? string | ItemOrDeepItems : string
+) => string;
 // export type JoinerOfDeepArrays<T extends S | DeepArray<S> = S | DeepArray<S>> = (items: T) => S;
 
 export const ifDeepArrayThenFlattenWith = <T extends S | DeepArray<S> = S | DeepArray<S>>(
@@ -113,12 +116,16 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 ): (items: ItemOrDeepItems | ItemOrDeepItems[]) => string;
 // (items: ItemOrDeepItems[]) => string;
 
-// export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
-export function joinWith<ItemOrDeepItems extends DeepArray<S> = DeepArray<S>>(
+export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
+	// export function joinWith<ItemOrDeepItems extends DeepArray<S> = DeepArray<S>>(
 	separator: string, //
-	appendNeitherFirstLastBoth: 0 | 1 | 2 | 3 | JoinerOfDeepArrays<Exclude<ItemOrDeepItems, S>> = 0,
+	// appendNeitherFirstLastBoth: 0 | 1 | 2 | 3 | JoinerOfDeepArrays<Exclude<ItemOrDeepItems, S>> = 0,
+	appendNeitherFirstLastBoth: 0 | 1 | 2 | 3 | JoinerOfDeepArrays<ItemOrDeepItems> = 0,
+
 	// flattenIfDeep: Joiner<ItemOrDeepItems> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
-	flattenIfDeep: JoinerOfDeepArrays<Exclude<ItemOrDeepItems, S>> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
+	// flattenIfDeep: JoinerOfDeepArrays<Exclude<ItemOrDeepItems, S>> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
+	// flattenIfDeep: JoinerOfDeepArrays<ItemOrDeepItems> = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
+	flattenIfDeep = ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
 		throw new Error(
 			"`joinerOfItemOrDeepItems` predicate is required for function `joinWith` if `items` are `DeepArray<S>` instead of just `S`, but none was provided."
 		);
@@ -144,8 +151,8 @@ export function joinWith<ItemOrDeepItems extends DeepArray<S> = DeepArray<S>>(
 		items: ItemOrDeepItems | ItemOrDeepItems[] //
 	): string =>
 		appendNeitherFirstLastBoth instanceof Function
-			? // ? (Array.isArray(items) ? items : [items])
-			  items
+			? (Array.isArray(items) ? items : [items])
+					// ?  items
 					.map((itemOrDeepItems) => ifDeepArrayThenFlattenWith(appendNeitherFirstLastBoth)(itemOrDeepItems))
 					.join(separator)
 			: ([1, 3].includes(appendNeitherFirstLastBoth) ? separator : "") +
