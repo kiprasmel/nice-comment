@@ -102,14 +102,9 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 }
 
 /**
- * joinWith(
- *   separators[0],
- *   0,
- *   ifDeepArrayThenFlattenWith(joinWith(separators[1], 0, ifDeepArrayThenFlattenWith(joinWith(separators[2], 0))))
- * );
+ * BEGIN joinWithDeep
  */
 
-// export type ArrayWithoutFirstElement<T extends any[] | readonly any[]> = T extends any[] ? T extends [infer _, ...infer RestT] ? RestT : never : never;
 export type ArrayWithoutFirstElement<T extends any[] | readonly any[]> =
 	T extends any[] | readonly any[]
 		? T extends [infer _, ...infer RestT]
@@ -119,96 +114,40 @@ export type ArrayWithoutFirstElement<T extends any[] | readonly any[]> =
 			: never
 		: never;
 
-type WO1 = ArrayWithoutFirstElement<[1,2,3]>
-type WO1R = ArrayWithoutFirstElement<readonly [1,2,3]>
+// TODO TEST TYPES
+// type WO1 = ArrayWithoutFirstElement<[1,2,3]>
+// type WO1R = ArrayWithoutFirstElement<readonly [1,2,3]>
 
 export type ArrayWithAtLeastOneElement<T = any> = [T, ...T[]];
 export type ReadonlyArrayWithAtLeastOneElement<T = any> = readonly [T, ...T[]];
 
-// type ARRR = ArrayWithoutFirstElement<[1, 2, 3, 4]>
-
-/**
- * should complete the type of `items`
- */
-// export type JoinDeep<Seps extends readonly any[]> = Seps["length"] extends 0 ? Seps | string[] : string[] | (string | JoinDeep<ArrayWithoutFirstElement<Seps>>)[];
 export type JoinDeep<Seps extends any[] | readonly any[]> = JoinDeepHelper<Seps, never>
 
-// export type JoinDeepHelper<Seps extends any[] | readonly any[], Acc > =
-// 	Seps extends { length: 0 } | never
-// 		// ? Seps | Acc
-// 		// ? Acc | (string | Acc)[]
-// 		? Acc // | Seps
-// 		// : string[] | (string | JoinDeep<string | ArrayWithoutFirstElement<Seps>>)
-// 		// : string[] | (string | JoinDeep<ArrayWithoutFirstElement<Seps>>)
-// 		// : string[] | (JoinDeepHelper<ArrayWithoutFirstElement<Seps>, (string | Acc)[] >)
-// 		// : string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, Acc | (string | Acc)[]>)[]
-// 		// : string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, Acc | (string | Acc)[]>)
-// 		// : string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>) | Acc
-// 		// : string | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>)[] | Acc
-// 		// : string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string | (string | Acc)[]>)[] | Acc
-// 		// : string[] | (JoinDeepHelper<any, >[] | JoinDeepHelper<>
-
-// 		: string[] | (string | JoinDeep<string | ArrayWithoutFirstElement<Seps>>)
-
-// 		// : string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, Acc>)[]
-// 		// : string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string | Acc>)
-
-// export type JoinDeepHelper<Seps extends any[] | readonly any[], Acc > =
-// 	Seps extends ArrayWithAtLeastOneElement<any> | ReadonlyArrayWithAtLeastOneElement<any>
-// 	// Seps extends { length: 0 } | never
-// 		// ? Acc // | Seps
-// 		? string[] | (string[] | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>)[]
-// 		: Acc
-
+/**
+ * https://devblogs.microsoft.com/typescript/announcing-typescript-4-5/#tailrec-conditional
+ */
 export type JoinDeepHelper<Seps extends any[] | readonly any[] | never, Acc > =
 	Seps extends ArrayWithAtLeastOneElement<any> | ReadonlyArrayWithAtLeastOneElement<any>
-	// Seps extends { length: 0 } | never
-		// ? Acc // | Seps
-		// ? string[] | (string[] | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>)[]
-		// ? string[] | (string[] | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>)[]
-
-		// ? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>[] )[]
-		// ? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>   )[]
-
-		// ? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)  >   )[]
-		// ? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)  >   )[]
-		? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>,            (string | Acc)  >   )[]
+		? | string[]
+		  | (
+			  | string
+			  | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, (string | Acc)>
+			)[]
 		: Acc
-		// : string[] | (string | Acc)[]
 
+export type DeepJoiner<Seps extends string[] | readonly string[]> = (items: JoinDeep<Seps>) => string;
 
-type O000 = JoinDeep<readonly []>
-type AAAA = JoinDeep<readonly [1]>
-type BBBB = JoinDeep<readonly [1, 2]>
-type CCCC = JoinDeep<readonly [1, 2, 3]>
-
-
-type ALMOST = JoinDeep<readonly ["\n", " "]>
-
-// type AAAA = JoinDeep<readonly [1, 2, 3, 4]>
-// type AAAA = JoinDeep<readonly [1, 2, 3, 4]>
-
-const BB: BBBB = ["lmao", ["yeet", ["kek", ["nope"]]]]
-const BBNope: BBBB = "nope"
-
-
-export type JoinWithDeep  <Seps extends string[] | readonly string[]> = (items: JoinDeep<Seps>) => string;
-
-export const joinWithDeep = <Seprtrs extends readonly string[]>(...separators: Seprtrs): JoinWithDeep<typeof separators> =>
+export const joinWithDeep = <Seprtrs extends readonly string[]>(...separators: Seprtrs): DeepJoiner<typeof separators> =>
 	separators
 		.slice(0, -1) // remove the last one, because we're using it in the initialization of .reduceRight
 		.reduceRight(
 			(composed, sep) => joinWith<ReturnType<typeof composed> | S>(sep, 0, ifDeepArrayThenFlattenWith(composed)),
 			joinWith(separators[separators.length - 1], 0)
-		) as any // TS should infer automatically, but not yet
+		) as DeepJoiner<typeof separators> // TS should infer automatically, but not yet
 
-joinWithDeep("\n", " ")(["lmao", ["lmao"]])
-
-// @ts-expect-error
-joinWithDeep("\n", " ")(["lmao", ["lmao", ["NO?"]]])
-
-// @ts-expect-error
-joinWithDeep("\n", " ")(["lmao", ["lmao", ["NO?", ["YES OMG IT WORKS JUST 1 LESS ARRAY LMAO"]]]])
+/**
+ * END joinWithDeep
+ */
 
 export const joinWithIncludingFirst = (sep: string) => joinWith(sep, 1);
 export const joinWithIncludingLast = (sep: string) => joinWith(sep, 2);
