@@ -74,14 +74,13 @@ export function joinWith<Item extends S = S>(
 	separator: string, //
 	appendNeitherFirstLastBoth?: 0 | 1 | 2 | 3,
 	joinerOfItemOrDeepItems?: never
-): // TODO compile-time (if DeepItems<S> === S[]):
-(items: Item[]) => string;
+): (items: Item[]) => string; // since Item is only a string, this would be identical: (items: (string | Item)[]) => string)
 
 export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
 	separator: string, //
 	appendNeitherFirstLastBoth: 0 | 1 | 2 | 3,
 	joinerOfItemOrDeepItems: Joiner<ItemOrDeepItems> //
-): (items: ItemOrDeepItems | ItemOrDeepItems[] | (S | ItemOrDeepItems)[]) => string;
+): (items: ItemOrDeepItems | (S | ItemOrDeepItems)[]) => string;
 
 export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
 	separator: string, //
@@ -104,8 +103,7 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 	// // TODO function overloads
 ) {
 	return (
-		// items: ItemOrDeepItems | ItemOrDeepItems[] //
-		items: ItemOrDeepItems | ItemOrDeepItems[] | (S | ItemOrDeepItems)[]
+		items: ItemOrDeepItems | (S | ItemOrDeepItems)[] //
 	): string =>
 		([1, 3].includes(appendNeitherFirstLastBoth) ? separator : "") +
 		(Array.isArray(items) ? items : [items])
