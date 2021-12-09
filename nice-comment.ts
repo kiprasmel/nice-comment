@@ -191,7 +191,7 @@ const BBNope: BBBB = "nope"
 
 export type JoinWithDeep  <Seps extends string[] | readonly string[]> = (items: JoinDeep<Seps>) => string;
 
-export const joinWithDeep = (...separators: readonly string[]): JoinWithDeep<typeof separators> =>
+export const joinWithDeep = <Seprtrs extends readonly string[]>(...separators: Seprtrs): JoinWithDeep<typeof separators> =>
 	separators
 		.slice(0, -1) // remove the last one, because we're using it in the initialization of .reduceRight
 		.reduceRight(
@@ -199,7 +199,13 @@ export const joinWithDeep = (...separators: readonly string[]): JoinWithDeep<typ
 			joinWith(separators[separators.length - 1], 0)
 		) as any // TS should infer automatically, but not yet
 
-joinWithDeep("\n", " ")(["lmao"])
+joinWithDeep("\n", " ")(["lmao", ["lmao"]])
+
+// @ts-expect-error
+joinWithDeep("\n", " ")(["lmao", ["lmao", ["NO?"]]])
+
+// @ts-expect-error
+joinWithDeep("\n", " ")(["lmao", ["lmao", ["NO?", ["YES OMG IT WORKS JUST 1 LESS ARRAY LMAO"]]]])
 
 export const joinWithIncludingFirst = (sep: string) => joinWith(sep, 1);
 export const joinWithIncludingLast = (sep: string) => joinWith(sep, 2);
