@@ -8,6 +8,26 @@ whenever you feel like using interpolation in template literals (<code>`foo ${ba
 <br>
 you could use [./nice-comment.ts](./nice-comment.ts) instead.
 
+## utils
+
+- `joinWithDeep`, combines the following:
+  - `joinWith`
+  - `ifDeepArrayThenFlattenWith`
+
+- `quote`
+- `tick`
+- `quoteTick`
+- `tickQuote`
+- `bracket`
+- `parens`
+- `array`
+- `bullets`
+
+a few pre-combined utils that now you'd create with `joinWithDeep` (kept for backwards compatibility):
+- `toSentence` (equiv. to `joinWithDeep("")`)
+- `toParagraph` (equiv. to `joinWithDeep(" ", "")`)
+- `toComment` (equiv. to `joinWithDeep("\n\n", " ", "")`)
+
 ## License
 
 [MIT](./LICENSE)
