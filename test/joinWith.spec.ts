@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node-dev
 
 import { runMany } from "jest-sucks";
-import { joinWith, joinWithIncludingFirst, joinWithIncludingLast, joinWithIncludingFirstLast } from "..";
+import { joinWith, joinWithIncludingFirst, joinWithIncludingLast, joinWithIncludingFirstLast } from "../nice-comment";
 
 runMany([
 	[

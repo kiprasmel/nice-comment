@@ -1,20 +1,16 @@
+import { expectToError, noop } from "jest-sucks";
 import { joinWith, Sentence, toComment } from "../nice-comment";
 
-export const noop = (..._xs: any[]): void => {};
+// @ts-expect-error
+const toParagraphBadBecauseMissingDeepJoiner = joinWith<Sentence>(" ");
+noop(toParagraphBadBecauseMissingDeepJoiner);
 
-try {
-	// @ts-expect-error
-	const toParagraphBadBecauseMissingDeepJoiner = joinWith<Sentence>(" ");
-
-	noop(toParagraphBadBecauseMissingDeepJoiner);
-
+expectToError(() => {
 	// @ts-expect-error
 	toComment(["foo", ["bar", ["baz", ["ooka"]]]]);
+});
 
-	toComment(["foo", ["bar", ["baz"]]]);
+toComment(["foo", ["bar", ["baz"]]]);
 
-	// @ts-expect-error
-	toComment("foo");
-} catch (e) {
-	//
-}
+// @ts-expect-error
+toComment("foo");
