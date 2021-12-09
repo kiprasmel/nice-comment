@@ -180,16 +180,26 @@ type O000 = JoinDeep<readonly []>
 type AAAA = JoinDeep<readonly [1]>
 type BBBB = JoinDeep<readonly [1, 2]>
 type CCCC = JoinDeep<readonly [1, 2, 3]>
+
+
 // type AAAA = JoinDeep<readonly [1, 2, 3, 4]>
 // type AAAA = JoinDeep<readonly [1, 2, 3, 4]>
 
-export const joinWithDeep = (...separators: readonly string[]) =>
+const BB: BBBB = ["lmao", ["yeet", ["kek", ["nope"]]]]
+const BBNope: BBBB = "nope"
+
+
+export type JoinWithDeep  <Seps extends string[] | readonly string[]> = (items: JoinDeep<Seps>) => string;
+
+export const joinWithDeep = (...separators: readonly string[]): JoinWithDeep<typeof separators> =>
 	separators
 		.slice(0, -1) // remove the last one, because we're using it in the initialization of .reduceRight
 		.reduceRight(
 			(composed, sep) => joinWith<ReturnType<typeof composed> | S>(sep, 0, ifDeepArrayThenFlattenWith(composed)),
 			joinWith(separators[separators.length - 1], 0)
-		);
+		) as any // TS should infer automatically, but not yet
+
+joinWithDeep("\n", " ")(["lmao"])
 
 export const joinWithIncludingFirst = (sep: string) => joinWith(sep, 1);
 export const joinWithIncludingLast = (sep: string) => joinWith(sep, 2);
