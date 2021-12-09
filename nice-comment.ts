@@ -102,19 +102,52 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 }
 
 /**
- * joinWith(
- *   separators[0],
- *   0,
- *   ifDeepArrayThenFlattenWith(joinWith(separators[1], 0, ifDeepArrayThenFlattenWith(joinWith(separators[2], 0))))
- * );
+ * BEGIN joinWithDeep
  */
-export const joinWithDeep = (...separators: string[]) /** TODO TS */ =>
+
+export type ArrayWithoutFirstElement<T extends any[] | readonly any[]> =
+	T extends any[] | readonly any[]
+		? T extends [infer _, ...infer RestT]
+			? RestT
+		: T extends readonly [infer _, ...infer RestT] 
+			? RestT // TODO return `readonly`
+			: never
+		: never;
+
+// TODO TEST TYPES
+// type WO1 = ArrayWithoutFirstElement<[1,2,3]>
+// type WO1R = ArrayWithoutFirstElement<readonly [1,2,3]>
+
+export type ArrayWithAtLeastOneElement<T = any> = [T, ...T[]];
+export type ReadonlyArrayWithAtLeastOneElement<T = any> = readonly [T, ...T[]];
+
+export type JoinDeep<Seps extends any[] | readonly any[]> = JoinDeepHelper<Seps, never>
+
+/**
+ * https://devblogs.microsoft.com/typescript/announcing-typescript-4-5/#tailrec-conditional
+ */
+export type JoinDeepHelper<Seps extends any[] | readonly any[] | never, Acc > =
+	Seps extends ArrayWithAtLeastOneElement<any> | ReadonlyArrayWithAtLeastOneElement<any>
+		? | string[]
+		  | (
+			  | string
+			  | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, (string | Acc)>
+			)[]
+		: Acc
+
+export type DeepJoiner<Seps extends string[] | readonly string[]> = (items: JoinDeep<Seps>) => string;
+
+export const joinWithDeep = <Seprtrs extends readonly string[]>(...separators: Seprtrs): DeepJoiner<typeof separators> =>
 	separators
 		.slice(0, -1) // remove the last one, because we're using it in the initialization of .reduceRight
 		.reduceRight(
-			(composed, sep) => joinWith(sep, 0, ifDeepArrayThenFlattenWith(composed)),
+			(composed, sep) => joinWith<ReturnType<typeof composed> | S>(sep, 0, ifDeepArrayThenFlattenWith(composed)),
 			joinWith(separators[separators.length - 1], 0)
-		);
+		) as DeepJoiner<typeof separators> // TS should infer automatically, but not yet
+
+/**
+ * END joinWithDeep
+ */
 
 export const joinWithIncludingFirst = (sep: string) => joinWith(sep, 1);
 export const joinWithIncludingLast = (sep: string) => joinWith(sep, 2);
