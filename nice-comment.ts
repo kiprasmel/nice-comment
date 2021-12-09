@@ -90,17 +90,6 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 			"`joinerOfItemOrDeepItems` predicate is required for function `joinWith` if `items` are `DeepArray<S>` instead of just `S`, but none was provided."
 		);
 	})
-	// // TODO compile-time (if DeepItems<S> === S[]):
-	// joinerOfItemOrDeepItems: S[] extends ItemOrDeepItems
-	// 	? Joiner<ItemOrDeepItems> //
-	// : never
-	// 	: never = (ifDeepArrayThenFlattenWith<ItemOrDeepItems>(() => {
-	// 	throw new Error(
-	// 		"`joinerOfItemOrDeepItems` predicate is required for function `joinWith` if `items` are `DeepArray<S>` instead of just `S`, but none was provided."
-	// 	);
-	// 	// : never
-	// }) as Joiner<ItemOrDeepItems> | never) as any
-	// // TODO function overloads
 ) {
 	return (
 		items: ItemOrDeepItems | (S | ItemOrDeepItems)[] //
@@ -126,24 +115,6 @@ export const joinWithDeep = (...separators: string[]) /** TODO TS */ =>
 			(composed, sep) => joinWith(sep, 0, ifDeepArrayThenFlattenWith(composed)),
 			joinWith(separators[separators.length - 1], 0)
 		);
-
-joinWithDeep("\n", " ", "")(["lmao", "kek", "w"]);
-
-export const toCC = joinWith(
-	"\n",
-	0,
-	ifDeepArrayThenFlattenWith(joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith(""))))
-);
-// export const toCC = ifDeepArrayThenFlattenWith(joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith(""))));
-// export const toCC = joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith("")));
-
-// export const toC = joinWith(
-// 	"\n\n",
-// 	0,
-// 	ifDeepArrayThenFlattenWith(joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith(""))))
-// );
-
-// toC(["lmao", "kek"]);
 
 export const joinWithIncludingFirst = (sep: string) => joinWith(sep, 1);
 export const joinWithIncludingLast = (sep: string) => joinWith(sep, 2);
