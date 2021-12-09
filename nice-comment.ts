@@ -171,7 +171,8 @@ export type JoinDeepHelper<Seps extends any[] | readonly any[] | never, Acc > =
 		// ? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)[]>   )[]
 
 		// ? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)  >   )[]
-		? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)  >   )[]
+		// ? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>, string[] | (string | Acc)  >   )[]
+		? string[] | (string | JoinDeepHelper<ArrayWithoutFirstElement<Seps>,            (string | Acc)  >   )[]
 		: Acc
 		// : string[] | (string | Acc)[]
 
@@ -181,6 +182,8 @@ type AAAA = JoinDeep<readonly [1]>
 type BBBB = JoinDeep<readonly [1, 2]>
 type CCCC = JoinDeep<readonly [1, 2, 3]>
 
+
+type ALMOST = JoinDeep<readonly ["\n", " "]>
 
 // type AAAA = JoinDeep<readonly [1, 2, 3, 4]>
 // type AAAA = JoinDeep<readonly [1, 2, 3, 4]>
