@@ -112,6 +112,25 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 		([2, 3].includes(appendNeitherFirstLastBoth) ? separator : "");
 }
 
+/**
+ * joinWith(
+ *   separators[0],
+ *   0,
+ *   ifDeepArrayThenFlattenWith(joinWith(separators[1], 0, ifDeepArrayThenFlattenWith(joinWith(separators[2], 0))))
+ * );
+ */
+// TODO TS
+export const joinWithDeep = (...separators: string[]) => {
+	const reversedSeps = [...separators].reverse();
+
+	return reversedSeps.reduce(
+		(composed, sep) => joinWith(sep, 0, ifDeepArrayThenFlattenWith(composed)),
+		joinWith(reversedSeps[0], 0)
+	);
+};
+
+joinWithDeep("\n", " ", "")(["lmao", "kek", "w"]);
+
 export const toCC = joinWith(
 	"\n",
 	0,
