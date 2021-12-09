@@ -81,7 +81,7 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 	separator: string, //
 	appendNeitherFirstLastBoth: 0 | 1 | 2 | 3,
 	joinerOfItemOrDeepItems: Joiner<ItemOrDeepItems> //
-): (items: ItemOrDeepItems[]) => string;
+): (items: ItemOrDeepItems | ItemOrDeepItems[] | (S | ItemOrDeepItems)[]) => string;
 
 export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArray<S>>(
 	separator: string, //
@@ -104,14 +104,31 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
 	// // TODO function overloads
 ) {
 	return (
-		items: ItemOrDeepItems[] //
+		// items: ItemOrDeepItems | ItemOrDeepItems[] //
+		items: ItemOrDeepItems | ItemOrDeepItems[] | (S | ItemOrDeepItems)[]
 	): string =>
 		([1, 3].includes(appendNeitherFirstLastBoth) ? separator : "") +
-		items //
-			.map((itemOrDeepItems: ItemOrDeepItems) => flattenIfDeep(itemOrDeepItems))
+		(Array.isArray(items) ? items : [items])
+			.map((itemOrDeepItems: ItemOrDeepItems | S) => flattenIfDeep(itemOrDeepItems))
 			.join(separator) +
 		([2, 3].includes(appendNeitherFirstLastBoth) ? separator : "");
 }
+
+export const toCC = joinWith(
+	"\n",
+	0,
+	ifDeepArrayThenFlattenWith(joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith(""))))
+);
+// export const toCC = ifDeepArrayThenFlattenWith(joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith(""))));
+// export const toCC = joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith("")));
+
+// export const toC = joinWith(
+// 	"\n\n",
+// 	0,
+// 	ifDeepArrayThenFlattenWith(joinWith(" ", 0, ifDeepArrayThenFlattenWith(joinWith(""))))
+// );
+
+// toC(["lmao", "kek"]);
 
 export const joinWithIncludingFirst = (sep: string) => joinWith(sep, 1);
 export const joinWithIncludingLast = (sep: string) => joinWith(sep, 2);
@@ -122,8 +139,9 @@ export type Sentence = string | Part[];
 export type Paragraph = string | Sentence[];
 export type Comment = Paragraph[];
 
-export const toSentence = joinWith<Part>("", 0);
-export const toParagraph = joinWith<Sentence>(" ", 0, ifDeepArrayThenFlattenWith(toSentence));
+export const toSentence = joinWith("", 0);
+// export const toParagraph = joinWith<string | string[]>(" ", 0, ifDeepArrayThenFlattenWith(toSentence));
+export const toParagraph = joinWith<string[]>(" ", 0, ifDeepArrayThenFlattenWith(toSentence));
 
 /**
  * 1st level array - joining with double newlines `"\n\n"`
@@ -236,4 +254,5 @@ export const toParagraph = joinWith<Sentence>(" ", 0, ifDeepArrayThenFlattenWith
  * ```
  *
  */
-export const toComment = joinWith<Paragraph>("\n\n", 0, ifDeepArrayThenFlattenWith(toParagraph));
+// export const toComment = joinWith<Paragraph>("\n\n", 0, ifDeepArrayThenFlattenWith(toParagraph));
+export const toComment = joinWith("\n\n", 0, ifDeepArrayThenFlattenWith(toParagraph));
