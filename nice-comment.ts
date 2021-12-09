@@ -158,9 +158,11 @@ export type Sentence = string | Part[];
 export type Paragraph = string | Sentence[];
 export type Comment = Paragraph[];
 
-export const toSentence = joinWith("", 0);
-// export const toParagraph = joinWith<string | string[]>(" ", 0, ifDeepArrayThenFlattenWith(toSentence));
-export const toParagraph = joinWith<string[]>(" ", 0, ifDeepArrayThenFlattenWith(toSentence));
+// export const toSentence = joinWith("", 0);
+export const toSentence = joinWithDeep("")
+
+// export const toParagraph = joinWith<string[]>(" ", 0, ifDeepArrayThenFlattenWith(toSentence));
+export const toParagraph = joinWithDeep(" ", "");
 
 /**
  * 1st level array - joining with double newlines `"\n\n"`
@@ -273,5 +275,5 @@ export const toParagraph = joinWith<string[]>(" ", 0, ifDeepArrayThenFlattenWith
  * ```
  *
  */
-// export const toComment = joinWith<Paragraph>("\n\n", 0, ifDeepArrayThenFlattenWith(toParagraph));
-export const toComment = joinWith("\n\n", 0, ifDeepArrayThenFlattenWith(toParagraph));
+// export const toComment = joinWith("\n\n", 0, ifDeepArrayThenFlattenWith(toParagraph));
+export const toComment = joinWithDeep("\n\n", " ", "")
