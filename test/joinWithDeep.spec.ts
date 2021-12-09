@@ -1,7 +1,8 @@
 #!/usr/bin/env ts-node-dev
 
-import { runMany } from "jest-sucks";
-import { joinWithDeep } from "../nice-comment";
+import { expectToError, runMany } from "jest-sucks";
+
+import { joinWithDeep, toComment } from "../nice-comment";
 
 runMany([
 	[
@@ -12,3 +13,18 @@ runMany([
 		`ayy lmao`,
 	],
 ]);
+
+expectToError(() => {
+	// @ts-expect-error
+	joinWithDeep(" ", "")(["ayy", ["l", "m", "a", "o", ["kek"]]]);
+});
+
+expectToError(() => {
+	// @ts-expect-error
+	joinWithDeep(" ", "")(["ayy", ["l", "m", "a", "o", ["yeet"]]]);
+});
+
+expectToError(() => {
+	// @ts-expect-error
+	toComment(["ayy", ["l", "m", "a", "o", ["yeet", ["1337"]]]]);
+});

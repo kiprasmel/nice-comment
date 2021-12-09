@@ -119,15 +119,13 @@ export function joinWith<ItemOrDeepItems extends S | DeepArray<S> = S | DeepArra
  *   ifDeepArrayThenFlattenWith(joinWith(separators[1], 0, ifDeepArrayThenFlattenWith(joinWith(separators[2], 0))))
  * );
  */
-// TODO TS
-export const joinWithDeep = (...separators: string[]) => {
-	const reversedSeps = [...separators].reverse();
-
-	return reversedSeps.reduce(
-		(composed, sep) => joinWith(sep, 0, ifDeepArrayThenFlattenWith(composed)),
-		joinWith(reversedSeps[0], 0)
-	);
-};
+export const joinWithDeep = (...separators: string[]) /** TODO TS */ =>
+	separators
+		.slice(0, -1) // remove the last one, because we're using it in the initialization of .reduceRight
+		.reduceRight(
+			(composed, sep) => joinWith(sep, 0, ifDeepArrayThenFlattenWith(composed)),
+			joinWith(separators[separators.length - 1], 0)
+		);
 
 joinWithDeep("\n", " ", "")(["lmao", "kek", "w"]);
 
