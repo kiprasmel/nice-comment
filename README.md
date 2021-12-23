@@ -8,6 +8,8 @@ whenever you feel like using interpolation in template literals (<code>`foo ${ba
 <br>
 you could use [./nice-comment.ts](./nice-comment.ts) instead.
 
+or just use [ts-dedent](https://github.com/tamino-martinius/node-ts-dedent), idc
+
 ## utils
 
 - `joinWithDeep`, combines the following:
