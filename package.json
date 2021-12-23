@@ -1,6 +1,6 @@
 {
 	"name": "nice-comment",
-	"version": "0.12.1",
+	"version": "0.12.2",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"author": "Kipras Melnikovas <kipras@kipras.org> (https://kipras.org/)",
